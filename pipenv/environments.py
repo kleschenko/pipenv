@@ -68,6 +68,12 @@ PIPENV_DONT_USE_PYENV = bool(os.environ.get("PIPENV_DONT_USE_PYENV"))
 Default is to install Python automatically via pyenv when needed, if possible.
 """
 
+PIPENV_DONT_USE_ASDF = bool(os.environ.get("PIPENV_DONT_USE_ASDF"))
+"""If set, Pipenv does not attempt to install Python with asdf.
+
+Default is to install Python automatically via asdf when needed, if possible.
+"""
+
 PIPENV_DOTENV_LOCATION = os.environ.get("PIPENV_DOTENV_LOCATION")
 """If set, Pipenv loads the ``.env`` file at the specified location.
 
@@ -151,6 +157,7 @@ if PIPENV_IS_CI:
     PIPENV_NOSPIN = True
 
 PIPENV_SPINNER = "dots" if not os.name == "nt" else "bouncingBar"
+PIPENV_SPINNER = os.environ.get("PIPENV_SPINNER", PIPENV_SPINNER)
 """Sets the default spinner type.
 
 Spinners are identitcal to the node.js spinners and can be found at
@@ -240,7 +247,11 @@ PIP_EXISTS_ACTION = os.environ.get("PIP_EXISTS_ACTION", "w")
 Defaullts to (w)ipe
 """
 
-PIPENV_RESOLVE_VCS = _is_env_truthy(os.environ.get("PIPENV_RESOLVE_VCS", 'true'))
+PIPENV_RESOLVE_VCS = (
+    os.environ.get("PIPENV_RESOLVE_VCS") is None
+    or _is_env_truthy("PIPENV_RESOLVE_VCS")
+)
+
 """Tells Pipenv whether to resolve all VCS dependencies in full.
 
 As of Pipenv 2018.11.26, only editable VCS dependencies were resolved in full.
@@ -249,7 +260,7 @@ approach, you may set this to '0', 'off', or 'false'.
 """
 
 PIPENV_PYUP_API_KEY = os.environ.get(
-    "PIPENV_PYUP_API_KEY", "1ab8d58f-5122e025-83674263-bc1e79e0"
+    "PIPENV_PYUP_API_KEY", None
 )
 
 # Internal, support running in a different Python from sys.executable.
